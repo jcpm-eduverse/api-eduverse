@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse - Atualizar Instituição</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #e8f5e9; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 5px solid #2e7d32; }
+        h2 { text-align: center; color: #2e7d32; margin-bottom: 20px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #666; font-weight: 600; font-size: 0.9rem; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        input:focus, textarea:focus { border-color: #2e7d32; outline: none; }
+
+        /* Campo ID destacado */
+        #id { background-color: #fff3e0; border-color: #ffcc80; font-weight: bold; }
+
+        button { width: 100%; padding: 12px; background-color: #2e7d32; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: 0.3s; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #1b5e20; }
+
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
+        .nav-link { display: block; text-align: center; margin-top: 15px; color: #2e7d32; text-decoration: none; font-size: 0.9rem; }
+        .nav-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Atualizar Dados</h2>
+        <form id="updateForm">
+
+            <div class="form-group">
+                <label>ID da Instituição (Obrigatório)</label>
+                <input type="number" id="id" required placeholder="Digite o ID para atualizar">
+            </div>
+
+            <div class="form-group">
+                <label>Novo Nome</label>
+                <input type="text" id="name" placeholder="Nome atualizado">
+            </div>
+
+            <div class="form-group">
+                <label>Novo Email</label>
+                <input type="email" id="email" placeholder="Email atualizado">
+            </div>
+
+            <div class="form-group">
+                <label>Nova Descrição</label>
+                <textarea id="description" placeholder="Nova descrição..."></textarea>
+            </div>
+
+            <button type="submit">Salvar Alterações</button>
+        </form>
+
+        <div id="message"></div>
+        <a href="index.html" class="nav-link">Voltar para o Início</a>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3080/api/instituitions/update-instituition";
+
+        document.getElementById('updateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Monta o objeto com os dados
+            const formData = {
+                id: document.getElementById('id').value, // ID é crucial no update
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                description: document.getElementById('description').value
+                // Se deixar algum campo vazio aqui, ele pode apagar no banco dependendo da lógica.
+                // Idealmente, num sistema real, carregamos os dados antes de editar.
+            };
+
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerText = "Atualizando...";
+            msgDiv.style.color = "gray";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "PUT", // Usamos PUT para atualizações
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData),
+                    credentials: "include" // Envia o cookie para autenticar
+                });
+
+                if (response.ok) {
+                    msgDiv.innerText = "Instituição atualizada com sucesso!";
+                    msgDiv.style.color = "green";
+                } else if (response.status === 401) {
+                    msgDiv.innerText = "Erro 401: Você precisa fazer Login antes!";
+                    msgDiv.style.color = "red";
+                } else if (response.status === 404) {
+                    msgDiv.innerText = "Erro 404: ID não encontrado.";
+                    msgDiv.style.color = "orange";
+                } else {
+                    msgDiv.innerText = "Erro: " + response.status;
+                    msgDiv.style.color = "red";
+                }
+            } catch (error) {
+                console.error(error);
+                msgDiv.innerText = "Erro de conexão.";
+                msgDiv.style.color = "red";
+            }
+        });
+    </script>
+
+</body>
+</html>

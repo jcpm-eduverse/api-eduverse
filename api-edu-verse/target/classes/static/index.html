@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse - Login Test</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; text-align: center; }
+        h2 { color: #333; margin-bottom: 1.5rem; }
+        button { width: 100%; padding: 10px; margin: 5px 0; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-login { background-color: #4CAF50; color: white; }
+        .btn-login:hover { background-color: #45a049; }
+        .btn-delete { background-color: #f44336; color: white; }
+        .btn-delete:hover { background-color: #d32f2f; }
+        #status { margin-top: 15px; font-size: 0.9rem; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>EduVerse API</h2>
+    <p>Teste de Autenticação</p>
+
+    <button onclick="fazerLogin()" class="btn-login">🔑 Gerar Cookie (Login)</button>
+    <hr>
+    <input type="number" id="idDelete" placeholder="ID para deletar" style="width: 90%; padding: 8px; margin-bottom: 5px;">
+    <button onclick="tentarDeletar()" class="btn-delete">🗑️ Deletar Instituição</button>
+
+    <div id="status">Status: Aguardando...</div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:3080/api/instituitions";
+
+    async function fazerLogin() {
+        updateStatus("Tentando logar...", "black");
+        try {
+            // O segredo está no "credentials: 'include'"
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include' // OBRIGATÓRIO: Permite receber e salvar o cookie
+            });
+
+            if (response.ok) {
+                const texto = await response.text();
+                updateStatus("Sucesso: " + texto, "green");
+            } else {
+                updateStatus("Erro no login", "red");
+            }
+        } catch (error) {
+            console.error(error);
+            updateStatus("Erro de conexão", "red");
+        }
+    }
+
+    async function tentarDeletar() {
+        const id = document.getElementById('idDelete').value;
+        if(!id) { alert("Digite um ID!"); return; }
+
+        updateStatus(`Tentando deletar ID ${id}...`, "black");
+
+        try {
+            // Ao enviar "credentials: 'include'", o navegador envia o cookie automaticamente
+            const response = await fetch(`${API_URL}/delete-instituition/${id}`, {
+                method: 'DELETE',
+                credentials: 'include' // OBRIGATÓRIO: Envia o cookie salvo de volta
+            });
+
+            if (response.status === 204) {
+                updateStatus("Deletado com sucesso!", "green");
+            } else if (response.status === 401) {
+                updateStatus("Erro 401: Não autorizado (Cookie inválido ou inexistente)", "red");
+            } else if (response.status === 404) {
+                updateStatus("Erro 404: ID não existe", "orange");
+            } else {
+                updateStatus("Erro desconhecido: " + response.status, "red");
+            }
+        } catch (error) {
+            updateStatus("Erro de conexão", "red");
+        }
+    }
+
+    function updateStatus(msg, color) {
+        const el = document.getElementById('status');
+        el.innerText = msg;
+        el.style.color = color;
+    }
+</script>
+</body>
+</html>
