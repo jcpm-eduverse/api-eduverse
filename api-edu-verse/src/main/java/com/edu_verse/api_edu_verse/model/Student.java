@@ -1,10 +1,7 @@
 package com.edu_verse.api_edu_verse.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     private String name;
@@ -40,4 +38,8 @@ public class Student {
     private String Salt;
 
     private List<String> tag;
+
+    @ManyToOne
+    @JoinColumn(name = "classroom_id")
+    private ClassRoom classRoom; // O aluno está em UMA turma
 }

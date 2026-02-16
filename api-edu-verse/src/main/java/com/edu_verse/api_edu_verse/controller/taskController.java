@@ -21,9 +21,11 @@ public class taskController {
     @Autowired
     private cookieServiceTeacher cookieServiceTeacher;
 
-    @PostMapping("/get-task/{id}")
-    public List<Tasks> getTasks(@PathVariable Long id){
-        return taskRepository.findByTaskId(id);
+    @GetMapping("/get-task/{id}")
+    public ResponseEntity<Tasks> getTask(@PathVariable Long id) {
+        return taskRepository.findById(id)
+                .map(task -> ResponseEntity.ok(task)) // Se achar, retorna 200 OK e a tarefa
+                .orElse(ResponseEntity.notFound().build()); // Se não achar, retorna 404
     }
 
     @PostMapping("/new-task")
