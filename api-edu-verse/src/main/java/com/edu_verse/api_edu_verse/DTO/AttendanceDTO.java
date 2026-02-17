@@ -6,6 +6,7 @@ import java.time.LocalDate;
 @Data
 public class AttendanceDTO {
     private Long studentId;
+    private Long classroomId;
     private boolean present;
     private LocalDate date;
 }

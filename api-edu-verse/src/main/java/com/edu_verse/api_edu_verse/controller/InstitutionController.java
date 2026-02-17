@@ -2,7 +2,7 @@ package com.edu_verse.api_edu_verse.controller;
 
 
 import com.edu_verse.api_edu_verse.model.Institution;
-import com.edu_verse.api_edu_verse.repository.InstituitionRepository;
+import com.edu_verse.api_edu_verse.repository.InstitutionRepository;
 import com.edu_verse.api_edu_verse.service.cookieService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.List;
 public class InstitutionController {
 
     @Autowired
-    private InstituitionRepository instituitionRepository;
+    private InstitutionRepository instituitionRepository;
     @Autowired
     private cookieService cookieService;
 

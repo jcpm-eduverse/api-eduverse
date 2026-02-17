@@ -6,21 +6,23 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "attendance_records",
-        uniqueConstraints = { @UniqueConstraint(columnNames = { "student_id", "date" }) })
+@Table(name = "attendances")
 public class Attendance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
-
-    @Column(nullable = false)
+    private boolean present;
     private LocalDate date;
 
-    @Column(nullable = false)
-    private boolean present; // true = Presente, false = Falta
+    // VÍNCULO 1: O Aluno
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    // VÍNCULO 2: A Turma (Para garantir que a presença é naquela aula específica)
+    @ManyToOne
+    @JoinColumn(name = "classroom_id")
+    private ClassRoom classRoom;
 }

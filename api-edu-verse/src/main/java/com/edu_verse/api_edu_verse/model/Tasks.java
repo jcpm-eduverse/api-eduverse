@@ -2,28 +2,36 @@ package com.edu_verse.api_edu_verse.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
+import java.time.LocalDate;
 
 @Data
 @Entity
 @Table(name = "tasks")
 public class Tasks {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String instituition;
+    // Mudamos de 'task_name' para 'title' para bater com o DTO
+    private String title;
 
-    private String task_name;
+    // Mudamos de 'task_context' para 'description'
+    private String description;
 
-    private String task_context;
+    // Adicionamos a recompensa de XP
+    private int xpReward;
 
-    private String teacher;
+    // Adicionamos o prazo
+    private LocalDate deadline;
 
+    // --- O VÍNCULO IMPORTANTE ---
+    // Substitui aquela List<String> classes que não servia para nada relational
+    @ManyToOne
+    @JoinColumn(name = "classroom_id")
+    private ClassRoom classRoom;
+
+    // Lista de alunos que completaram (pode manter, mas idealmente seria outra tabela)
     @ElementCollection
-    private List<String> classes;
-
-    @ElementCollection
-    private List<String> students_completed;
+    private java.util.List<String> studentsCompleted;
 }
