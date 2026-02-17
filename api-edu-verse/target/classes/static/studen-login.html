@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse - Acesso Estudante</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #e3f2fd; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; border-top: 5px solid #1565c0; }
+        h2 { color: #1565c0; margin-bottom: 2rem; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #1565c0; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+        button:hover { background-color: #0d47a1; }
+        .link { margin-top: 15px; display: block; font-size: 0.9rem; color: #666; text-decoration: none; }
+        .link:hover { text-decoration: underline; }
+        #msg { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🎓 Área do Estudante</h2>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email do Aluno" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+    </form>
+    <div id="msg"></div>
+
+    <a href="institution-login.html" class="link">Sou uma instituição →</a>
+</div>
+
+<script>
+    // Note que aqui chamamos a rota de STUDENTS
+    const API_URL = "http://localhost:3080/api/students/login";
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('msg');
+        msg.innerText = "Autenticando...";
+        msg.style.color = "gray";
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                credentials: 'include' // SALVA O COOKIE
+            });
+
+            if (response.ok) {
+                msg.innerText = "Bem-vindo, Aluno!";
+                msg.style.color = "blue";
+                // Aqui você redirecionaria para a home do aluno
+                // window.location.href = "home-student.html";
+            } else {
+                msg.innerText = "Credenciais inválidas";
+                msg.style.color = "red";
+            }
+        } catch (error) {
+            msg.innerText = "Erro de servidor";
+            msg.style.color = "red";
+        }
+    });
+</script>
+</body>
+</html>

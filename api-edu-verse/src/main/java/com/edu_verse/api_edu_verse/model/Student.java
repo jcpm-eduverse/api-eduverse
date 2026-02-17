@@ -40,6 +40,6 @@ public class Student {
     private List<String> tag;
 
     @ManyToOne
-    @JoinColumn(name = "classroom_id")
-    private ClassRoom classRoom; // O aluno está em UMA turma
+    @JoinColumn(name = "classroom_id") // <--- ADICIONE ISTO! Força o Java a ler a coluna certa.
+    private ClassRoom classRoom;
 }
