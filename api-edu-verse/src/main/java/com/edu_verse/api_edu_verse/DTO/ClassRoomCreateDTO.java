@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class ClassRoomCreateDTO {
     private String name;
-    private Long institutionId;
+    private String discipline;
+    //private Long institutionId;
 }

@@ -32,7 +32,6 @@ public class StudentService {
         student.setEmail(dto.getEmail());
         student.setCpf(dto.getCpf());
 
-        // 3. Criptografa a senha (O pulo do gato)
         String senhaCriptografada = passwordEncoder.encode(dto.getPassword());
         student.setPassword(senhaCriptografada);
 
@@ -44,6 +43,19 @@ public class StudentService {
         student.setXp(0);
 
         // 6. Salva no banco
+        return studentRepository.save(student);
+    }
+
+    public Student updateStudent(Long id, StudentCreateDTO dto) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("aluno não encontrado"));
+
+        student.setName(dto.getName());
+
+        if(dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            student.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
         return studentRepository.save(student);
     }
 }
