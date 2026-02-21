@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer; // 1. IMPORT OBRIGATÓRIO AQUI
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,9 +28,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults()) // 2. O SECURITY AGORA RESPEITA O WEBCONFIG
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // 1. ROTAS TOTALMENTE ABERTAS (Agora com o /error)
+
+                        // 3. A REGRA DE OURO: Deixa o navegador fazer a pergunta de segurança (Preflight)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 1. ROTAS TOTALMENTE ABERTAS
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/api-docs/**",
@@ -44,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/students/login").permitAll()
 
-                        // 3. TUDO O MAIS (Exige JWT no Authorize)
+                        // 3. TUDO O MAIS (Exige JWT)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
