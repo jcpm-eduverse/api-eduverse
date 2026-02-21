@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Edu Verse API", version = "1.0", description = "Documentação da API Edu Verse"),
+        info = @Info(title = "Edu Verse API", version = "1.0", description = "eduverse api created to JCPM Recife PE"),
         // Configura para que TODOS os endpoints peçam o cadeado por padrão
         security = @SecurityRequirement(name = "bearerAuth")
 )

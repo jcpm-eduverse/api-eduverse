@@ -13,11 +13,15 @@ C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_ver
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\AttendanceCreateDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\AttendanceDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\ClassRoomCreateDTO.java
+C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\ClassRoomResponseDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\InstituitionCreateDTO.java
+C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\JoinClassDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\LoginDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\StudentCreateDTO.java
+C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\StudentResponseDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\TaskCreateDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\TeacherCreateDTO.java
+C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\DTO\TeacherResponseDTO.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\model\Attendance.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\model\ClassRoom.java
 C:\Users\kiall\IdeaProjects\api-eduverse\api-edu-verse\src\main\java\com\edu_verse\api_edu_verse\model\Institution.java

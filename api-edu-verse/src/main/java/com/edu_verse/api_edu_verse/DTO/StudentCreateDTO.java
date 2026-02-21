@@ -8,5 +8,4 @@ public class StudentCreateDTO {
     private String email;
     private String password;
     private String cpf;
-    private Long classroomId;
 }

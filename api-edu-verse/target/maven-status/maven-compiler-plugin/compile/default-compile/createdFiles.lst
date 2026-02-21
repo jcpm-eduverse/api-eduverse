@@ -2,6 +2,7 @@ com\edu_verse\api_edu_verse\controller\AuthController$TokenResponse.class
 com\edu_verse\api_edu_verse\DTO\TeacherCreateDTO.class
 com\edu_verse\api_edu_verse\model\ClassRoom.class
 com\edu_verse\api_edu_verse\DTO\LoginDTO.class
+com\edu_verse\api_edu_verse\DTO\JoinClassDTO.class
 com\edu_verse\api_edu_verse\service\TokenService.class
 com\edu_verse\api_edu_verse\model\Attendance.class
 com\edu_verse\api_edu_verse\service\TaskService.class
@@ -13,10 +14,12 @@ com\edu_verse\api_edu_verse\model\Student.class
 com\edu_verse\api_edu_verse\service\cookieService.class
 com\edu_verse\api_edu_verse\service\StudentService.class
 com\edu_verse\api_edu_verse\controller\TeacherController.class
+com\edu_verse\api_edu_verse\DTO\StudentResponseDTO.class
 com\edu_verse\api_edu_verse\config\SecurityFilter.class
 com\edu_verse\api_edu_verse\service\AttendanceService.class
 com\edu_verse\api_edu_verse\controller\StudentController.class
 com\edu_verse\api_edu_verse\DTO\ClassRoomCreateDTO.class
+com\edu_verse\api_edu_verse\DTO\TeacherResponseDTO.class
 com\edu_verse\api_edu_verse\DTO\StudentCreateDTO.class
 com\edu_verse\api_edu_verse\repository\StudentRepository.class
 com\edu_verse\api_edu_verse\repository\TeacherRepository.class
@@ -37,5 +40,6 @@ com\edu_verse\api_edu_verse\config\WebConfig.class
 com\edu_verse\api_edu_verse\repository\ClassRoomRepository.class
 com\edu_verse\api_edu_verse\service\cookieServiceTeacher.class
 com\edu_verse\api_edu_verse\DTO\InstituitionCreateDTO.class
+com\edu_verse\api_edu_verse\DTO\ClassRoomResponseDTO.class
 com\edu_verse\api_edu_verse\model\Tasks.class
 com\edu_verse\api_edu_verse\controller\InstitutionController.class

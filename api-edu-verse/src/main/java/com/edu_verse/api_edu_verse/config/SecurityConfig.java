@@ -3,21 +3,21 @@ package com.edu_verse.api_edu_verse.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod; // <--- O IMPORT QUE FALTAVA (1)
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy; // <--- O IMPORT QUE FALTAVA (2)
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -25,36 +25,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf(csrf -> csrf.disable())
-                // Agora o Java sabe o que é SessionCreationPolicy
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // ADICIONE "/api-docs/**" AQUI NA LISTA:
-                        .requestMatchers("/auth/login", "/v3/api-docs/**", "/swagger-ui/**", "/api-docs/**").permitAll()
+                .authorizeHttpRequests(authorize -> authorize
+                        // 1. ROTAS TOTALMENTE ABERTAS (Agora com o /error)
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/error"
+                        ).permitAll()
 
-                        // ... o resto continua igual ...
+                        // 2. CADASTROS E LOGINS (Porta de entrada)
                         .requestMatchers(HttpMethod.POST, "/teachers").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/students/new-student").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/students/login").permitAll()
+
+                        // 3. TUDO O MAIS (Exige JWT no Authorize)
                         .anyRequest().authenticated()
                 )
-                // ADICIONA O FILTRO JWT
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
-    // Mantivemos esse usuário "dev_front" em memória, mas lembre-se:
-    // Como tiramos o .httpBasic(), ele não vai pedir login no navegador.
-    // Esse usuário só servirá se você reativar o httpBasic ou usar endpoints específicos.
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails docsUser = User.builder()
-                .username("dev_front")
-                .password(passwordEncoder().encode("front123"))
-                .roles("DOCS")
-                .build();
-
-        return new InMemoryUserDetailsManager(docsUser);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean

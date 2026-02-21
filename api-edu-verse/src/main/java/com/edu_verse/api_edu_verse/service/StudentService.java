@@ -22,28 +22,30 @@ public class StudentService {
     private PasswordEncoder passwordEncoder; // Vem do SecurityConfig
 
     public Student createStudent(StudentCreateDTO dto) {
-        // 1. Busca a Sala no banco pelo ID que veio no DTO
-        ClassRoom sala = classRoomRepository.findById(dto.getClassroomId())
-                .orElseThrow(() -> new RuntimeException("Erro: Sala com ID " + dto.getClassroomId() + " não encontrada."));
-
-        // 2. Transfere os dados do DTO para a Entidade
         Student student = new Student();
         student.setName(dto.getName());
         student.setEmail(dto.getEmail());
         student.setCpf(dto.getCpf());
 
-        String senhaCriptografada = passwordEncoder.encode(dto.getPassword());
-        student.setPassword(senhaCriptografada);
+        // Criptografia ativada
+        student.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        // 4. Faz o vínculo da Sala encontrada
-        student.setClassRoom(sala);
-
-        // 5. Define os valores iniciais do jogo
+        // Valores iniciais
         student.setLevel(1);
         student.setXp(0);
 
-        // 6. Salva no banco
         return studentRepository.save(student);
+    }
+
+    public void joinClassRoom(String emailDoAlunoLogado, String codigoDaTurma) {
+        Student student = studentRepository.findByEmail(emailDoAlunoLogado)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+
+        ClassRoom classRoom = classRoomRepository.findByCode(codigoDaTurma)
+                .orElseThrow(() -> new RuntimeException("Código de turma inválido."));
+
+        student.setClassRoom(classRoom);
+        studentRepository.save(student);
     }
 
     public Student updateStudent(Long id, StudentCreateDTO dto) {

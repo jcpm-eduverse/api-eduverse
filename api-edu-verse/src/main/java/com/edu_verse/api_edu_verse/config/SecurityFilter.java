@@ -1,67 +1,72 @@
 package com.edu_verse.api_edu_verse.config;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.edu_verse.api_edu_verse.model.Teacher;
+import com.edu_verse.api_edu_verse.repository.InstitutionRepository;
+import com.edu_verse.api_edu_verse.repository.StudentRepository;
 import com.edu_verse.api_edu_verse.repository.TeacherRepository;
+import com.edu_verse.api_edu_verse.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Value("${ENV_COOKIE_KEY}")
-    private String secret;
+    @Autowired
+    private TokenService tokenService;
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private InstitutionRepository institutionRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
 
-        // DEBUG 1: O token chegou?
-        if (token != null) {
-            System.out.println("DEBUG: Token recebido: " + token);
-            try {
-                var algorithm = Algorithm.HMAC256(secret);
-                var email = JWT.require(algorithm)
-                        .withIssuer("api-edu-verse")
-                        .build()
-                        .verify(token)
-                        .getSubject();
+        if (token == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-                // DEBUG 2: O token é válido e leu o email?
-                System.out.println("DEBUG: Email decifrado: " + email);
+        // AQUI ESTÁ O SEGREDO QUE VOCÊ IGNOROU ANTES: O TRY-CATCH
+        try {
+            var email = tokenService.validateToken(token);
+            var role = tokenService.getRole(token);
 
-                Teacher teacher = teacherRepository.findByEmail(email).orElse(null);
+            if (email != null && !email.isEmpty() && role != null) {
+                Object user = null;
 
-                // DEBUG 3: Achou o professor no banco?
-                if (teacher != null) {
-                    System.out.println("DEBUG: Professor encontrado: " + teacher.getName());
-                    var authentication = new UsernamePasswordAuthenticationToken(teacher, null, Collections.emptyList());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    System.out.println("DEBUG: Professor NÃO encontrado no banco para o email: " + email);
+                if ("ROLE_TEACHER".equals(role)) {
+                    user = teacherRepository.findByEmail(email).orElse(null);
+                } else if ("ROLE_STUDENT".equals(role)) {
+                    user = studentRepository.findByEmail(email).orElse(null);
+                } else if ("ROLE_INSTITUTION".equals(role)) {
+                    user = institutionRepository.findByEmail(email).orElse(null);
                 }
-            } catch (JWTVerificationException e) {
-                // DEBUG 4: Deu ruim na validação
-                System.out.println("DEBUG: Erro ao validar token: " + e.getMessage());
+
+                if (user != null) {
+                    var authorities = List.of(new SimpleGrantedAuthority(role));
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-        } else {
-            System.out.println("DEBUG: Token veio NULO ou mal formatado.");
+        } catch (Exception e) {
+            // Se o token for inválido, o Swagger não toma 403, ele apenas é tratado como "Anônimo".
+            System.out.println("Token ignorado: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
