@@ -4,6 +4,7 @@ import com.edu_verse.api_edu_verse.DTO.ClassRoomCreateDTO;
 import com.edu_verse.api_edu_verse.DTO.ClassRoomResponseDTO;
 import com.edu_verse.api_edu_verse.model.ClassRoom;
 import com.edu_verse.api_edu_verse.model.Student;
+import com.edu_verse.api_edu_verse.model.Teacher;
 import com.edu_verse.api_edu_verse.repository.ClassRoomRepository;
 import com.edu_verse.api_edu_verse.service.ClassRoomService;
 import com.edu_verse.api_edu_verse.service.TokenService;
@@ -55,6 +56,26 @@ public class ClassRoomController {
                 .map(ClassRoomResponseDTO::new)
                 .toList();
 
+        return ResponseEntity.ok(responseList);
+    }
+
+    @GetMapping("/teacher-classrooms")
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')") // A porta blindada para os mestres
+    public ResponseEntity<List<ClassRoomResponseDTO>> getTeacherClassRooms(
+            @Parameter(hidden = true) Authentication auth) {
+
+        // 1. O Cast correto e seguro: Quem entrou por essa porta TEM que ser Teacher
+        Teacher connTeacher = (Teacher) auth.getPrincipal();
+
+        // 2. A busca implacável: Traz apenas as turmas onde ele é o dono
+        List<ClassRoom> classRooms = classRoomRepository.findByTeacherId(connTeacher.getId());
+
+        // 3. A barreira de DTO: Converte as Entidades para não vazar a senha do professor no JSON
+        List<ClassRoomResponseDTO> responseList = classRooms.stream()
+                .map(ClassRoomResponseDTO::new)
+                .toList();
+
+        // 4. Retorna Status 200 com a lista (mesmo que seja vazia [])
         return ResponseEntity.ok(responseList);
     }
 

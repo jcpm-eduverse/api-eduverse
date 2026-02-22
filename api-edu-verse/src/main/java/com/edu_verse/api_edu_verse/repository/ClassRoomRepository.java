@@ -14,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long> {
     List<ClassRoom> findByTeacher(Teacher teacher);
+    List<ClassRoom> findByTeacherId(Long teacherId);
     Optional<ClassRoom> findByCode(String code);
 
     @Query("SELECT s.classRoom FROM Student s WHERE s.email = :email AND s.classRoom IS NOT NULL")
