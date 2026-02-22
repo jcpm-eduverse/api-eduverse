@@ -4,6 +4,7 @@ com\edu_verse\api_edu_verse\model\ClassRoom.class
 com\edu_verse\api_edu_verse\DTO\LoginDTO.class
 com\edu_verse\api_edu_verse\DTO\JoinClassDTO.class
 com\edu_verse\api_edu_verse\service\TokenService.class
+com\edu_verse\api_edu_verse\DTO\LoginResponseDTO.class
 com\edu_verse\api_edu_verse\model\Attendance.class
 com\edu_verse\api_edu_verse\service\TaskService.class
 com\edu_verse\api_edu_verse\controller\AuthController.class
